@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">ProyectoInnovacionPDM2025-GT2-Grupo3</string>
+    <string name="title_app">Meme Factory</string>
+    <string name="subtitle_app">¡Suelta los memes más divertidos de Internet! 🔥</string>
+    <string name="btn_create">Crear un Meme</string>
+    <string name="collectionMeme">Tu colección de memes</string>
+    <string name="btn_refresh">Actualizar</string>
+    <string name="btn_create_your_meme">Crear tu propio meme</string>
+    <string name="choosePic">Seleccionar imagen</string>
+    <string name="text_gallery">Galería</string>
+    <string name="text_camera">Cámara</string>
+    <string name="add_text">Agrega tu texto</string>
+    <string name="view_meme">Vista previa de tu meme</string>
+    <string name="icon_image">Ícono de imagen</string>
+    <string name="icon_gallery">icon_gallery</string>
+    <string name="icon_camera">icon_camera</string>
+    <string name="top_text">Texto Superior</string>
+    <string name="bottom_text">Texto Inferior</string>
+    <string name="text_preview_meme">¡Elige una imagen para comenzar a crear tu meme!</string>
+    <string name="save_meme">Guardar</string>
+    <string name="share_meme">Compartir</string>
+    <string name="title_tips">Pro Meme Tips 💯</string>
+    <string name="tip_1">Mantén el texto breve y conciso para un máximo impacto.</string>
+    <string name="icon_tip1">🔥</string>
+    <string name="tip_2">El texto en MAYÚSCULAS es el estilo clásico para memes.</string>
+    <string name="icon_tip2">✨</string>
+    <string name="tip_3">Usa situaciones que todos entiendan.</string>
+    <string name="icon_tip3">🤣</string>
+    <string name="tip_4">Comparte tus memes en todas partes para obtener fama instantánea.</string>
+    <string name="icon_tip4">📸</string>
+    <string name="icon_image_preview">icon_image_preview</string>
+
+    <!--    Login-->
+    <string name="btn_login_title">Iniciar sesión</string>
+    <string name="login_title">¡Bienvenido de nuevo!</string>
+    <string name="login_subtitle">Inicia sesión para crear y compartir memes geniales.</string>
+    <string name="login_email">Correo electrónico</string>
+    <string name="login_password">Contraseña</string>
+    <string name="no_account">¿No tienes cuenta?</string>
+    <string name="create_account">Regístrate</string>
+    <!--    Register-->
+    <string name="register_title">¡Únete a la diversión!</string>
+    <string name="register_subtitle">Crea una cuenta para empezar a crear memes geniales.</string>
+    <string name="register_nombre">Nombre</string>
+    <string name="register_email">Correo electrónico</string>
+    <string name="register_password">Contraseña</string>
+    <string name="btn_register_title">Registrarse</string>
+    <string name="if_account">¿Ya tienes una cuenta?</string>
+    <string name="link_login">Iniciar sesión</string>
+    <string name="hello_blank_fragment">Hello Fragment</string>
+    <string name="placeholder_email">example@gmail.com</string>
+    <string name="register_name_holder">Tu Nombre</string>
+    <string name="permission_denied">Se necesita permiso para acceder a la galería</string>
+</resources>

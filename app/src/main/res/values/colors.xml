@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="gray">#D9D9D9</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="primary_purple">#8B5CF6</color>
+    <color name="neon_pink">#EC4899</color>
+    <color name="bright_green">#0EA5E9</color>
+    <color name="accent_green">#10B981</color>
+    <color name="vibrant_yellow">#FBBF24</color>
+    <color name="transparent">#E6FFFFFF</color>
+    <color name="bg_preview_meme">#FDF6FA</color>
+    <color name="bg_choose_image">#F9F7FF</color>
+</resources>
