@@ -10,6 +10,7 @@
     <string name="text_gallery">Galería</string>
     <string name="text_camera">Cámara</string>
     <string name="start_camera">Iniciar cámara</string>
+    <string name="stop_camera">Detener cámara</string>
     <string name="take_picture">Tomar foto</string>
     <string name="text_text">Texto</string>
     <string name="text_style">Estilo</string>

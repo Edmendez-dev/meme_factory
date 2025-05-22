@@ -4,8 +4,6 @@ import android.content.Intent
 import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.*
@@ -17,6 +15,8 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import android.provider.MediaStore
 import com.google.firebase.auth.FirebaseAuth
+import java.io.File
+import java.io.FileOutputStream
 
 class CreateActivity : AppCompatActivity(), tabText.TextListener {
 
@@ -177,57 +177,58 @@ class CreateActivity : AppCompatActivity(), tabText.TextListener {
                 }
 
                 // Calcular posición del texto
-                fun calculateAdjustedTextSize(text: String, availableWidth: Float, availableHeight: Float): Float {
-                    val testPaint = Paint(fillPaint)
-                    var testSize = currentTextSize
-                    testPaint.textSize = testSize
-
-                    // Reducir tamaño hasta que quepa en el ancho
-                    while (testPaint.measureText(text) > availableWidth * 0.9f && testSize > 10f) {
-                        testSize -= 1f
-                        testPaint.textSize = testSize
+                fun calculateAdjustedTextSize(text: String, availableWidth: Float): Float {
+                    val testPaint = Paint(fillPaint).apply {
+                        textSize = currentTextSize
                     }
+                    var adjustedSize = currentTextSize
 
-                    // Asegurar que también quepa en altura
-                    val metrics = testPaint.fontMetrics
-                    val textHeight = metrics.descent - metrics.ascent
-                    if (textHeight > availableHeight * 0.8f) {
-                        testSize = (availableHeight * 0.8f) / (metrics.descent - metrics.ascent) * testSize
-                        testPaint.textSize = testSize
+                    // Reducir tamaño hasta que quepa en el ancho disponible
+                    while (testPaint.measureText(text) > availableWidth && adjustedSize > 10f) {
+                        adjustedSize -= 1f
+                        testPaint.textSize = adjustedSize
                     }
-
-                    return testSize
+                    return adjustedSize
                 }
+
+                // Margenes fijos en pixeles
+                val topMargin = 20f    // 50px desde el borde superior
+                val bottomMargin = 20f  // 50px desde el borde inferior
 
                 // Dibujar texto superior
                 if (topText.isNotEmpty()) {
-                    val availableWidth = mutableBitmap.width * 0.9f
-                    val availableHeight = mutableBitmap.height * 0.4f
-                    val adjustedSize = calculateAdjustedTextSize(topText, availableWidth, availableHeight)
+                    val availableWidth = mutableBitmap.width * 0.9f  // 90% del ancho de imagen
+                    val adjustedSize = calculateAdjustedTextSize(topText, availableWidth)
 
                     borderPaint.textSize = adjustedSize
                     fillPaint.textSize = adjustedSize
 
                     val textWidth = fillPaint.measureText(topText)
-                    val xPos = (mutableBitmap.width - textWidth) / 2
-                    val yPos = 50f + (fillPaint.descent() - fillPaint.ascent()) // Margen superior + altura texto
+                    val xPos = (mutableBitmap.width - textWidth) / 2  // Centrado horizontal
+
+                    // Posición Y fija usando fontMetrics
+                    val metrics = fillPaint.fontMetrics
+                    val yPos = topMargin - metrics.ascent  // Ajuste preciso desde el borde superior
 
                     canvas.drawText(topText, xPos, yPos, borderPaint)
                     canvas.drawText(topText, xPos, yPos, fillPaint)
                 }
 
+
                 // Dibujar texto inferior
                 if (bottomText.isNotEmpty()) {
                     val availableWidth = mutableBitmap.width * 0.9f
-                    val availableHeight = mutableBitmap.height * 0.4f
-                    val adjustedSize = calculateAdjustedTextSize(bottomText, availableWidth, availableHeight)
+                    val adjustedSize = calculateAdjustedTextSize(bottomText, availableWidth)
 
                     borderPaint.textSize = adjustedSize
                     fillPaint.textSize = adjustedSize
 
                     val textWidth = fillPaint.measureText(bottomText)
                     val xPos = (mutableBitmap.width - textWidth) / 2
-                    val yPos = mutableBitmap.height - 50f // Margen inferior
+
+                    // Posición Y fija usando fontMetrics
+                    val metrics = fillPaint.fontMetrics
+                    val yPos = mutableBitmap.height - bottomMargin - metrics.descent
 
                     canvas.drawText(bottomText, xPos, yPos, borderPaint)
                     canvas.drawText(bottomText, xPos, yPos, fillPaint)
@@ -263,5 +264,46 @@ class CreateActivity : AppCompatActivity(), tabText.TextListener {
     override fun onBottomTextChanged(text: String) {
         bottomText = text
         updateMemePreview()
+    }
+
+    fun onImageTaken(bitmap: Bitmap) {
+        try {
+            val initialPreview = findViewById<LinearLayout>(R.id.initial_preview)
+            val selectedImageView = findViewById<ImageView>(R.id.selected_image_view)
+            val iconPreview = findViewById<ImageView>(R.id.icon_image_preview)
+
+            // Detener animación del icono
+            iconPreview.clearAnimation()
+
+            // Ocultar vista previa inicial
+            initialPreview.visibility = View.GONE
+
+            // Mostrar imagen tomada
+            selectedImageView.visibility = View.VISIBLE
+            selectedImageView.setImageBitmap(bitmap)
+
+            // Guardar URI temporal
+            selectedImageUri = saveBitmapToCache(bitmap)
+
+            // Actualizar vista previa
+            updateMemePreview()
+
+            Toast.makeText(this, "Foto tomada", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al procesar foto", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
+    }
+
+    private fun saveBitmapToCache(bitmap: Bitmap): Uri? {
+        return try {
+            val file = File(cacheDir, "temp_photo.jpg")
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+            outputStream.close()
+            Uri.fromFile(file)
+        } catch (e: Exception) {
+            null
+        }
     }
 }

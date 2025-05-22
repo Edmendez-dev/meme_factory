@@ -11,13 +11,18 @@
     <color name="transparent">#E6FFFFFF</color>
     <color name="bg_preview_meme">#FDF6FA</color>
     <color name="bg_choose_image">#F9F7FF</color>
-    <color name="text_yellow">#FBBF24</color>
-    <color name="text_red">#EF4444</color>
-    <color name="text_green">#10B981</color>
-    <color name="text_blue">#3B82F6</color>
-    <color name="border_black">#000000</color>
-    <color name="border_red">#EF4444</color>
-    <color name="border_purple">#8B5CF6</color>
-    <color name="border_pink">#EC4899</color>
-    <color name="border_transparent">#E6FFFFFF</color>
+    <color name="bg_take_image">#F4DFE9</color>
+    <color name="red">#FF0000</color>
+    <color name="green">#00FF00</color>
+    <color name="blue">#0000FF</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="orange">#FFA500</color>
+    <color name="brown">#A52A2A</color>
+    <color name="purple">#800080</color>
+    <color name="pink">#FFC0CB</color>
+    <color name="cyan">#00FFFF</color>
+    <color name="lime">#00FF00</color>
+    <color name="turquoise">#40E0D0</color>
+    <color name="gold">#FFD700</color>
+    <color name="silver">#C0C0C0</color>
 </resources>
