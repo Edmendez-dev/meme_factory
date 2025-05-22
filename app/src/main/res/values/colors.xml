@@ -11,4 +11,13 @@
     <color name="transparent">#E6FFFFFF</color>
     <color name="bg_preview_meme">#FDF6FA</color>
     <color name="bg_choose_image">#F9F7FF</color>
+    <color name="text_yellow">#FBBF24</color>
+    <color name="text_red">#EF4444</color>
+    <color name="text_green">#10B981</color>
+    <color name="text_blue">#3B82F6</color>
+    <color name="border_black">#000000</color>
+    <color name="border_red">#EF4444</color>
+    <color name="border_purple">#8B5CF6</color>
+    <color name="border_pink">#EC4899</color>
+    <color name="border_transparent">#E6FFFFFF</color>
 </resources>

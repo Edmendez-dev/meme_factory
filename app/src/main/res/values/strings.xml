@@ -9,6 +9,10 @@
     <string name="choosePic">Seleccionar imagen</string>
     <string name="text_gallery">Galería</string>
     <string name="text_camera">Cámara</string>
+    <string name="start_camera">Iniciar cámara</string>
+    <string name="take_picture">Tomar foto</string>
+    <string name="text_text">Texto</string>
+    <string name="text_style">Estilo</string>
     <string name="add_text">Agrega tu texto</string>
     <string name="view_meme">Vista previa de tu meme</string>
     <string name="icon_image">Ícono de imagen</string>
@@ -51,4 +55,9 @@
     <string name="placeholder_email">example@gmail.com</string>
     <string name="register_name_holder">Tu Nombre</string>
     <string name="permission_denied">Se necesita permiso para acceder a la galería</string>
+    <string name="font_size">Tamaño de Letra</string>
+    <string name="font_color">Color de Letra</string>
+    <string name="width_border">Ancho del borde</string>
+    <string name="font_style">Estilo de Letra</string>
+    <string name="color_border">Color del borde</string>
 </resources>
