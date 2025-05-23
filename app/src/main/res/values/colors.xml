@@ -25,4 +25,5 @@
     <color name="turquoise">#40E0D0</color>
     <color name="gold">#FFD700</color>
     <color name="silver">#C0C0C0</color>
+    <color name="bg">#f8f9fa</color>
 </resources>

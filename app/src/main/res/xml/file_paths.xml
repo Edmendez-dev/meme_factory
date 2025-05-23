@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <cache-path name="shared_cache" path="/" />
-    <external-files-path name="memes" path="MemeFactory/" />
+    <!-- Para archivos en almacenamiento externo privado -->
+    <external-files-path
+        name="memes_directory"
+        path="MemeFactory/" />
+
+    <!-- Para archivos en almacenamiento interno -->
+    <files-path
+        name="internal_memes"
+        path="memes/" />
+
+    <!-- Para archivos en cache -->
+    <cache-path
+        name="cache_directory"
+        path="/" />
 </paths>

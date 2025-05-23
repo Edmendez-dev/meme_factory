@@ -2,11 +2,13 @@ package sv.edu.ues.fia.eisi.proyectoinnovacionpdm2025_gt2_grupo3
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.LinearGradient
 import android.graphics.Shader
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.FrameLayout
@@ -17,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -131,13 +134,37 @@ class MainActivity : AppCompatActivity() {
 
     fun shareMeme(position: Int) {
         val memeItem = memesList[position]
-        val shareIntent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_STREAM, memeItem.uri)
-            type = "image/jpeg"
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        try {
+            val file = File(memeItem.uri.path ?: return)
+            val contentUri = FileProvider.getUriForFile(
+                this,
+                "${packageName}.fileprovider",
+                file
+            )
+
+            val shareIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, contentUri)
+                type = "image/jpeg"
+                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            }
+
+            // Otorga permisos temporales a todas las apps que puedan manejar este intent
+            val resInfoList = packageManager.queryIntentActivities(shareIntent, PackageManager.MATCH_DEFAULT_ONLY)
+            for (resolveInfo in resInfoList) {
+                val packageName = resolveInfo.activityInfo.packageName
+                grantUriPermission(
+                    packageName,
+                    contentUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+
+            startActivity(Intent.createChooser(shareIntent, "Compartir meme"))
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al compartir: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+            Log.e("ShareMeme", "Error al compartir meme", e)
         }
-        startActivity(Intent.createChooser(shareIntent, "Compartir meme"))
     }
 
     fun saveMemeToGallery(position: Int) {
