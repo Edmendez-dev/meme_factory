@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.LinearGradient
 import android.graphics.Shader
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.FrameLayout
@@ -15,7 +17,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private lateinit var tabGallery: LinearLayout
@@ -26,6 +31,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cameraIcon: ImageView
     private lateinit var contentArea: FrameLayout
     private lateinit var auth: FirebaseAuth
+
+    // Añade estas propiedades a la clase
+    private lateinit var memesRecyclerView: RecyclerView
+    private lateinit var memesAdapter: MemesAdapter
+    private val memesList = mutableListOf<MemeItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +50,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_main)
+
+        memesRecyclerView = findViewById(R.id.memes_recycler_view)
+        memesRecyclerView.layoutManager = LinearLayoutManager(this)
+        memesAdapter = MemesAdapter(memesList, this)
+        memesRecyclerView.adapter = memesAdapter
+
+        loadSavedMemes()
 
         val btnCreateMeme = findViewById<TextView>(R.id.btn_create_meme)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -88,4 +105,57 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    // Añade estos métodos a la clase
+    private fun loadSavedMemes() {
+        val memesDir = File(getExternalFilesDir(null), CreateActivity.MEME_DIRECTORY)
+        if (memesDir.exists() && memesDir.isDirectory) {
+            memesList.clear()
+            memesDir.listFiles()?.sortedByDescending { it.lastModified() }?.forEach { file ->
+                memesList.add(MemeItem(Uri.fromFile(file)))
+            }
+            memesAdapter.notifyDataSetChanged()
+        }
+    }
+
+    fun deleteMeme(position: Int) {
+        val memeItem = memesList[position]
+        val file = File(memeItem.uri.path ?: return)
+        if (file.exists()) {
+            file.delete()
+            memesList.removeAt(position)
+            memesAdapter.notifyItemRemoved(position)
+            Toast.makeText(this, "Meme eliminado", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun shareMeme(position: Int) {
+        val memeItem = memesList[position]
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, memeItem.uri)
+            type = "image/jpeg"
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        startActivity(Intent.createChooser(shareIntent, "Compartir meme"))
+    }
+
+    fun saveMemeToGallery(position: Int) {
+        val memeItem = memesList[position]
+        try {
+            MediaStore.Images.Media.insertImage(
+                contentResolver,
+                memeItem.uri.path,
+                "meme_${System.currentTimeMillis()}.jpg",
+                "Meme from Meme Generator"
+            )
+            Toast.makeText(this, "Meme guardado en galería", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al guardar en galería", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
+    }
+
+    // Clase de modelo para los memes
+    data class MemeItem(val uri: Uri)
 }

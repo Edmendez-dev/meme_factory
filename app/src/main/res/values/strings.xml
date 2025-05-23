@@ -61,4 +61,8 @@
     <string name="width_border">Ancho del borde</string>
     <string name="font_style">Estilo de Letra</string>
     <string name="color_border">Color del borde</string>
+    <string name="save">Guardar</string>
+    <string name="share">Compartir</string>
+    <string name="delete">Eliminar</string>
+    <string name="meme_image">Imagen de meme</string>
 </resources>

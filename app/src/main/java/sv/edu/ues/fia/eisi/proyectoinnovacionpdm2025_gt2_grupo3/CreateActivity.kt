@@ -2,6 +2,7 @@ package sv.edu.ues.fia.eisi.proyectoinnovacionpdm2025_gt2_grupo3
 
 import android.content.Intent
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import android.provider.MediaStore
+import androidx.core.content.FileProvider
 import com.google.firebase.auth.FirebaseAuth
 import java.io.File
 import java.io.FileOutputStream
@@ -37,6 +39,13 @@ class CreateActivity : AppCompatActivity(), tabText.TextListener {
     private var currentTextColor = Color.WHITE
     private var currentBorderSize = 5f
     private var currentBorderColor = Color.BLACK
+
+    companion object {
+        const val MEME_DIRECTORY = "MemeFactory"
+        private const val MEME_PREFIX = "meme_"
+        private const val MEME_EXTENSION = ".jpg"
+        private const val QUALITY = 90
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,19 +110,6 @@ class CreateActivity : AppCompatActivity(), tabText.TextListener {
             finish()
         }
     }
-
-//    private fun setupTextListeners() {
-//        val textWatcher = object : TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-//            override fun afterTextChanged(s: Editable?) {
-//                updateMemePreview()
-//            }
-//        }
-//
-//        editTopText.addTextChangedListener(textWatcher)
-//        editBottomText.addTextChangedListener(textWatcher)
-//    }
 
     fun onImageSelected(uri: Uri) {
         selectedImageUri = uri
@@ -304,6 +300,115 @@ class CreateActivity : AppCompatActivity(), tabText.TextListener {
             Uri.fromFile(file)
         } catch (e: Exception) {
             null
+        }
+    }
+
+    fun onSaveMemeClick(view: View) {
+        if (selectedImageUri == null) {
+            Toast.makeText(this, "Primero selecciona una imagen", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            // Obtener el bitmap actualizado con los textos
+            val selectedImageView = findViewById<ImageView>(R.id.selected_image_view)
+            val drawable = selectedImageView.drawable
+            if (drawable is BitmapDrawable) {
+                val bitmap = drawable.bitmap
+                saveMemeToStorage(bitmap)
+                Toast.makeText(this, "Meme guardado correctamente", Toast.LENGTH_SHORT).show()
+
+                // Redirigir a MainActivity
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al guardar el meme", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
+    }
+
+    fun onShareMemeClick(view: View) {
+        if (selectedImageUri == null) {
+            Toast.makeText(this, "Primero selecciona una imagen", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            // Obtener el bitmap actualizado con los textos
+            val selectedImageView = findViewById<ImageView>(R.id.selected_image_view)
+            val drawable = selectedImageView.drawable
+            if (drawable is BitmapDrawable) {
+                val bitmap = drawable.bitmap
+                shareMeme(bitmap)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al compartir el meme", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
+    }
+
+    private fun saveMemeToStorage(bitmap: Bitmap): Uri? {
+        return try {
+            // Crear directorio si no existe
+            val storageDir = File(getExternalFilesDir(null), MEME_DIRECTORY)
+            if (!storageDir.exists()) {
+                storageDir.mkdirs()
+            }
+
+            // Crear archivo con nombre único
+            val timeStamp = System.currentTimeMillis().toString()
+            val memeFile = File(storageDir, "${MEME_PREFIX}${timeStamp}${MEME_EXTENSION}")
+
+            // Guardar bitmap
+            val outputStream = FileOutputStream(memeFile)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, QUALITY, outputStream)
+            outputStream.close()
+
+            // Añadir a la galería
+            MediaStore.Images.Media.insertImage(
+                contentResolver,
+                memeFile.absolutePath,
+                memeFile.name,
+                "Meme created with Meme Generator"
+            )
+
+            // Notificar a la galería que hay un nuevo archivo
+            sendBroadcast(
+                Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(memeFile))
+            )
+
+            Uri.fromFile(memeFile)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    private fun shareMeme(bitmap: Bitmap) {
+        try {
+            // Guardar temporalmente el meme para compartir
+            val file = File(cacheDir, "meme_to_share.jpg")
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, QUALITY, outputStream)
+            outputStream.close()
+
+            val shareUri = FileProvider.getUriForFile(
+                this,
+                "${packageName}.fileprovider",
+                file
+            )
+
+            val shareIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, shareUri)
+                type = "image/jpeg"
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            startActivity(Intent.createChooser(shareIntent, "Compartir meme"))
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
